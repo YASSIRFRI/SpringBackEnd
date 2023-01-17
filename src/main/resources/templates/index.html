@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://localhost:8080/"></script>
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Password</th>
+        </tr>
+        <tr th:each="person : ${persons}">
+            <td th:text="${person.id}"></td>
+            <td th:text="${person.name}"></td>
+            <td th:text="${person.password}"></td>
+        </tr>
+
+    </table>
+    
+</body>
+</html>
