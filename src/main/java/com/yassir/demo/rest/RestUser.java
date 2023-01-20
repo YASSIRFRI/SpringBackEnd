@@ -9,9 +9,7 @@ import lombok.Data;
 @Data
 @lombok.AllArgsConstructor
 @lombok.NoArgsConstructor
-public class User {
-
-
+public class RestUser {
     @JsonProperty("fname")
     private String fname;
     @JsonProperty("lname")

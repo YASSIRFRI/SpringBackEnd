@@ -13,4 +13,5 @@ import com.yassir.demo.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByFname(String fname);
+    List<User> findByEmail(String email);
 }
