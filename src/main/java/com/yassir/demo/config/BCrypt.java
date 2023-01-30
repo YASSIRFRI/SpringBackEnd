@@ -4,7 +4,6 @@ package com.yassir.demo.config;
 import java.beans.JavaBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.NoArgsConstructor;

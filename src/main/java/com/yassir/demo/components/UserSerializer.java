@@ -1,11 +1,12 @@
-package com.yassir.demo.serializers;
+package com.yassir.demo.components;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 
-@Service
+@Component
 @NoArgsConstructor
 public class UserSerializer {
     @Autowired

@@ -2,15 +2,16 @@ package com.yassir.demo.Controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yassir.demo.components.ContentSerializer;
+import com.yassir.demo.components.UserSerializer;
 import com.yassir.demo.config.BCrypt;
+import com.yassir.demo.entities.Content;
 import com.yassir.demo.entities.User;
-import com.yassir.demo.serializers.UserSerializer;
 import com.yassir.demo.services.Login;
 import com.yassir.demo.services.RegisterService;
 
@@ -27,7 +28,7 @@ public class UserController {
     private RegisterService registerService;
 
     @Autowired
-    private BCrypt bCryptPasswordEncoder;
+    private ContentSerializer contentSerializer;
 
     @Autowired
     private UserSerializer userSerializer; 
@@ -51,7 +52,8 @@ public class UserController {
     @PostMapping("/register")
     public String register(@RequestBody String request) {
         User usr= userSerializer.fromJson(request, User.class);
-        if(usr!=null)
+        boolean test= registerService.register(usr.getFname(), usr.getLname(), usr.getEmail(), usr.getPassword(),"USER");
+        if(test)
         {
             return "User Registered";
         }
@@ -60,6 +62,18 @@ public class UserController {
             return "User Not Registered";
         }
     }
+    @PostMapping("/upgradeRole")
+    public void addRoleToUser(String email, String roleName) {
+        registerService.addRoleToUser(email, roleName);
+    }
+
+    @PostMapping("/myContent")
+    public String myContent(@RequestBody String request) {
+        Content content= contentSerializer.fromJson(request, Content.class);
+        System.out.println(content);
+        return "Content Added";
+    }
+
 }
 
 

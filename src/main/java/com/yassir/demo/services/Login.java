@@ -16,9 +16,6 @@ import Dto.UserDto;
 public class Login {
     @Autowired
     private UserRepository userRepository;
-
-
-
     public UserDto login(String username, String password) {
         List<User> users= userRepository.findByFname(username);
         if(users.size()==0)
