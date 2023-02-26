@@ -15,4 +15,5 @@ import com.yassir.demo.entities.User;
 public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findByFname(String fname);
     List<User> findByEmail(String email);
+    
 }

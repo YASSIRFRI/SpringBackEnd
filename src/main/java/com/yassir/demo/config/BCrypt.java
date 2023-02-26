@@ -21,7 +21,7 @@ public class BCrypt {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public  String hashPassword(String password) {
+    public String hashPassword(String password) {
         return bCryptPasswordEncoder.encode(password);
     }
 

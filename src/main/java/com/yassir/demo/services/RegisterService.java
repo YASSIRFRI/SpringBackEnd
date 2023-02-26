@@ -3,7 +3,6 @@ package com.yassir.demo.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.yassir.demo.config.BCrypt;
-import com.yassir.demo.entities.Content;
 import com.yassir.demo.entities.Role;
 import com.yassir.demo.entities.User;
 import com.yassir.demo.repositories.RoleRepository;
@@ -54,13 +53,6 @@ public class RegisterService {
         user.getRoles().add(role);
     }
 
-    public void addContentToUser(String email, String about,String experience,String contact) {
-        User user = userRepository.findByEmail(email).get(0);
-        Content content = new Content();
-        content.setAbout(about);
-        content.setExperience(experience);
-        content.setContact(contact);
-        user.getContents().add(content);
-    }
+   
     
 }

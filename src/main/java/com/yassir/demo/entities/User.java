@@ -2,10 +2,15 @@ package com.yassir.demo.entities;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.UUID;
 
-import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -22,7 +27,7 @@ import java.util.List;
 @AllArgsConstructor 
 @NoArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails{
 
     @Id 
     @GeneratedValue
@@ -35,17 +40,62 @@ public class User {
 
 
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL )
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="users_roles",
     joinColumns = @JoinColumn(name="user_id"),
     inverseJoinColumns = @JoinColumn(name="role_id"))
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles;
 
-    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinTable(
-    joinColumns = @JoinColumn(name="user_id"),
-    inverseJoinColumns = @JoinColumn(name="content_id"))
-    private List<Content> contents = new ArrayList<>();
+    @ManyToMany(mappedBy = "users")
+    private Set<Team> teams;
+
+
+
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+    }
+
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+    }
+
+
+
+    @Override
+    public boolean isAccountNonLocked() {
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+    }
+
+
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+    }
+
+
+
+    @Override
+    public boolean isEnabled() {
+        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+    }
+
+
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+
+
 
 
 

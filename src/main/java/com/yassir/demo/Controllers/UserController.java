@@ -2,20 +2,33 @@ package com.yassir.demo.Controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yassir.demo.Requests.JwtRequest;
+import com.yassir.demo.Requests.JwtResponse;
+import com.yassir.demo.Requests.UserRequest;
 import com.yassir.demo.components.ContentSerializer;
+import com.yassir.demo.components.JwtTokenUtil;
 import com.yassir.demo.components.UserSerializer;
 import com.yassir.demo.config.BCrypt;
-import com.yassir.demo.entities.Content;
 import com.yassir.demo.entities.User;
 import com.yassir.demo.services.Login;
 import com.yassir.demo.services.RegisterService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import Dto.UserDto;
+
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -31,49 +44,62 @@ public class UserController {
     private ContentSerializer contentSerializer;
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
     private UserSerializer userSerializer; 
 
 
+    @Autowired
+    private JwtTokenUtil  jwtUtil;
 
-    @PostMapping("/login")
-    public String login(@RequestBody String request) {
-        User user= userSerializer.fromJson(request, User.class);
-        UserDto usr= loginService.login(user.getFname(), user.getPassword());
-        if(usr!=null)
-        {
-            return usr.getEmail();
+    @GetMapping(value="/login")
+    public String login(@RequestParam String username) {
+        return "Hello " + username;
+    }
+
+    @PostMapping(value="/authenticate")
+    public ResponseEntity<?> generateToken(@RequestBody JwtRequest jwtRequest) throws Exception{
+        try{
+            User user=loginService.authenticate(jwtRequest.getEmail(), jwtRequest.getPassword());
         }
-        else
+        catch(Exception e)
         {
-            return "Invalid Credentials";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+        final String token = jwtUtil.generateToken(jwtRequest.getEmail());
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    public void authenticate(String email, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
         }
     }
 
-    @PostMapping("/register")
-    public String register(@RequestBody String request) {
-        User usr= userSerializer.fromJson(request, User.class);
-        boolean test= registerService.register(usr.getFname(), usr.getLname(), usr.getEmail(), usr.getPassword(),"USER");
-        if(test)
-        {
-            return "User Registered";
+    @PostMapping(value="/register")
+    public ResponseEntity<?> register(@RequestBody UserRequest userRequest) throws Exception{
+        try{
+            registerService.register(userRequest.getFname(), userRequest.getLname(), userRequest.getEmail(), userRequest.getPassword(), "USER");
         }
-        else
+        catch(Exception e)
         {
-            return "User Not Registered";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
+        return ResponseEntity.ok("User registered successfully");
     }
-    @PostMapping("/upgradeRole")
-    public void addRoleToUser(String email, String roleName) {
-        registerService.addRoleToUser(email, roleName);
-    }
+    
 
-    @PostMapping("/myContent")
-    public String myContent(@RequestBody String request) {
-        Content content= contentSerializer.fromJson(request, Content.class);
-        System.out.println(content);
-        return "Content Added";
-    }
+    
 
+
+   
 }
 
 
